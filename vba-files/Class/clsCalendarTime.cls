@@ -10,12 +10,30 @@ Attribute VB_Exposed = False
 Option Explicit
 
 '========================================================================================
-' Class:           clsModernStyle
-' Author:          VBATools
-' Version:         1.0.1
-' Creation Date:   18.11.2025 15:28
-' Update Date:     18.11.2025 15:28
+' Class: clsCalendarTime
+' Author: VBATools
+' Version: 1.0.2
+' Creation Date: 18.11.2025 15:28
+' Last Update Date: 03.12.2025 14:00
+' License: Apache License
 '========================================================================================
+' Time color constants
+Public Enum enTimeColors
+    tcBlack = 0
+    tcWhite = 1677215
+    tcRed = 255
+    tcGreen = 65280
+    tcBlue = 16711680
+    tcYellow = 65535
+    tcOrange = 42495
+    tcBrown = 2763429
+    tcGray = 8421504
+    tcLightGray = 12632256
+    tcSelectedTime = 12632319
+    tcMoveHighlight = 14737632
+    tcTitleBar = 128
+End Enum
+
 Public Enum enIconTime
     icAddTo = 60616
     icEmojiTabFavorites = 60762
@@ -32,10 +50,10 @@ Private WithEvents mLbArrowUpHours As MSForms.Label
 Attribute mLbArrowUpHours.VB_VarHelpID = -1
 Private WithEvents mLbArrowDownHours As MSForms.Label
 Attribute mLbArrowDownHours.VB_VarHelpID = -1
-Private WithEvents mLbArrowUpMinuts As MSForms.Label
-Attribute mLbArrowUpMinuts.VB_VarHelpID = -1
-Private WithEvents mLbArrowDownMinuts As MSForms.Label
-Attribute mLbArrowDownMinuts.VB_VarHelpID = -1
+Private WithEvents mLbArrowUpMinutes As MSForms.Label
+Attribute mLbArrowUpMinutes.VB_VarHelpID = -1
+Private WithEvents mLbArrowDownMinutes As MSForms.Label
+Attribute mLbArrowDownMinutes.VB_VarHelpID = -1
 Private WithEvents mLbBtn As MSForms.Label
 Attribute mLbBtn.VB_VarHelpID = -1
 Private WithEvents mParent As MSForms.UserForm
@@ -44,7 +62,7 @@ Attribute mParent.VB_VarHelpID = -1
 Private mMainPanel  As MSForms.Frame
 Private mLbMainColon As MSForms.Label
 Private mLbHours    As MSForms.Label
-Private mLbMinuts   As MSForms.Label
+Private mLbMinutes   As MSForms.Label
 Private mRightBtn   As Boolean
 
 Private Const SIZE_LABEL As Byte = 12
@@ -53,109 +71,157 @@ Private Const SIZE_WIDTH As Byte = 45
 ' Property: Version
 ' Purpose: Gets version information about the class
 Public Property Get Version() As String
-    Version = "Version: 1.0.1" & vbNewLine & _
+    Version = "Version: 1.0.2" & vbNewLine & _
             "Author: VBATools" & vbNewLine & _
             "License: Apache" & vbNewLine & _
             "Date of creation: 18.11.2025 15:28" & vbNewLine & _
-            "Date of update: 18.11.2025 15:28"
+            "Date of update: 03.12.2025 14:00"
 End Property
 
-Public Property Get ForeColorArrowDownMinuts() As XlRgbColor
-    ForeColorArrowDownMinuts = mLbArrowDownMinuts.ForeColor
+' Property: ForeColorArrowDownMinutes
+' Purpose: Gets the color of the down arrow for minutes
+Public Property Get ForeColorArrowDownMinutes() As XlRgbColor
+    ForeColorArrowDownMinutes = mLbArrowDownMinutes.ForeColor
 End Property
 
-Public Property Let ForeColorArrowDownMinuts(ByVal ValueColor As XlRgbColor)
-    mLbArrowDownMinuts.ForeColor = ValueColor
+' Property: ForeColorArrowDownMinutes
+' Purpose: Sets the color of the down arrow for minutes
+Public Property Let ForeColorArrowDownMinutes(ByVal ValueColor As XlRgbColor)
+    mLbArrowDownMinutes.ForeColor = ValueColor
 End Property
 
-Public Property Get ForeColorArrowUpMinuts() As XlRgbColor
-    ForeColorArrowUpMinuts = mLbArrowUpMinuts.ForeColor
+' Property: ForeColorArrowUpMinutes
+' Purpose: Gets the color of the up arrow for minutes
+Public Property Get ForeColorArrowUpMinutes() As XlRgbColor
+    ForeColorArrowUpMinutes = mLbArrowUpMinutes.ForeColor
 End Property
 
-Public Property Let ForeColorArrowUpMinuts(ByVal ValueColor As XlRgbColor)
-    mLbArrowUpMinuts.ForeColor = ValueColor
+' Property: ForeColorArrowUpMinutes
+' Purpose: Sets the color of the up arrow for minutes
+Public Property Let ForeColorArrowUpMinutes(ByVal ValueColor As XlRgbColor)
+    mLbArrowUpMinutes.ForeColor = ValueColor
 End Property
 
+' Property: ForeColorArrowDownHours
+' Purpose: Gets the color of the down arrow for hours
 Public Property Get ForeColorArrowDownHours() As XlRgbColor
     ForeColorArrowDownHours = mLbArrowDownHours.ForeColor
 End Property
 
+' Property: ForeColorArrowDownHours
+' Purpose: Sets the color of the down arrow for hours
 Public Property Let ForeColorArrowDownHours(ByVal ValueColor As XlRgbColor)
     mLbArrowDownHours.ForeColor = ValueColor
 End Property
 
+' Property: ForeColorArrowUpHours
+' Purpose: Gets the color of the up arrow for hours
 Public Property Get ForeColorArrowUpHours() As XlRgbColor
     ForeColorArrowUpHours = mLbArrowUpHours.ForeColor
 End Property
 
+' Property: ForeColorArrowUpHours
+' Purpose: Sets the color of the up arrow for hours
 Public Property Let ForeColorArrowUpHours(ByVal ValueColor As XlRgbColor)
     mLbArrowUpHours.ForeColor = ValueColor
 End Property
 
+' Property: ForeColorColon
+' Purpose: Gets the color of the colon separator
 Public Property Get ForeColorColon() As XlRgbColor
     ForeColorColon = mLbMainColon.ForeColor
 End Property
 
+' Property: ForeColorColon
+' Purpose: Sets the color of the colon separator
 Public Property Let ForeColorColon(ByVal ValueColor As XlRgbColor)
     mLbMainColon.ForeColor = ValueColor
 End Property
 
-Public Property Get ForeColorMinuts() As XlRgbColor
-    ForeColorMinuts = mLbMinuts.ForeColor
+' Property: ForeColorMinutes
+' Purpose: Gets the color of the minutes display
+Public Property Get ForeColorMinutes() As XlRgbColor
+    ForeColorMinutes = mLbMinutes.ForeColor
 End Property
 
-Public Property Let ForeColorMinuts(ByVal ValueColor As XlRgbColor)
-    mLbMinuts.ForeColor = ValueColor
+' Property: ForeColorMinutes
+' Purpose: Sets the color of the minutes display
+Public Property Let ForeColorMinutes(ByVal ValueColor As XlRgbColor)
+    mLbMinutes.ForeColor = ValueColor
 End Property
 
+' Property: ForeColorHours
+' Purpose: Gets the color of the hours display
 Public Property Get ForeColorHours() As XlRgbColor
     ForeColorHours = mLbHours.ForeColor
 End Property
 
+' Property: ForeColorHours
+' Purpose: Sets the color of the hours display
 Public Property Let ForeColorHours(ByVal ValueColor As XlRgbColor)
     mLbHours.ForeColor = ValueColor
 End Property
 
+' Property: ForeColorBtn
+' Purpose: Gets the color of the button
 Public Property Get ForeColorBtn() As XlRgbColor
     ForeColorBtn = mLbBtn.ForeColor
 End Property
 
+' Property: ForeColorBtn
+' Purpose: Sets the color of the button
 Public Property Let ForeColorBtn(ByVal Color As XlRgbColor)
     mLbBtn.ForeColor = Color
 End Property
 
+' Property: ChoseDate
+' Purpose: Gets or sets the selected time
 Public Property Get ChoseDate() As Date
     If IsDate(mTextBox.Value) Then
         ChoseDate = VBA.CDate(mTextBox.Value)
     End If
 End Property
 
+' Property: ChoseDate
+' Purpose: Gets or sets the selected time
 Public Property Let ChoseDate(ByVal dtDate As Date)
     If IsDate(dtDate) Then
         mTextBox.Value = dtDate
     End If
 End Property
 
+' Property: IconCode
+' Purpose: Gets or sets the icon code for the button
 Public Property Get IconCode() As Long
     IconCode = VBA.Asc(mLbBtn.Caption)
 End Property
 
+' Property: IconCode
+' Purpose: Gets or sets the icon code for the button
 Public Property Let IconCode(ByVal IconCode As Long)
     mLbBtn.Caption = VBA.ChrW$(IconCode)
 End Property
 
+' Property: VisibleBtn
+' Purpose: Gets or sets the visibility of the button
 Public Property Get VisibleBtn() As Boolean
     VisibleBtn = mLbBtn.Visible
 End Property
 
+' Property: VisibleBtn
+' Purpose: Gets or sets the visibility of the button
 Public Property Let VisibleBtn(ByVal Value As Boolean)
     mLbBtn.Visible = Value
 End Property
 
+' Property: RightBtn
+' Purpose: Gets or sets the position of the button (right or left)
 Public Property Get RightBtn() As Boolean
     RightBtn = mRightBtn
 End Property
 
+' Property: RightBtn
+' Purpose: Gets or sets the position of the button (right or left)
 Public Property Let RightBtn(ByVal RightBtn As Boolean)
     mRightBtn = RightBtn
     If RightBtn Then
@@ -165,25 +231,56 @@ Public Property Let RightBtn(ByVal RightBtn As Boolean)
     End If
 End Property
 
+' Method: addTimePicker
+' Purpose: Adds a time picker control to a text box
+' Parameters:
+'   TextBox - The text box to attach the time picker to
+'   SetTime - The initial time to set (default is current time)
+'   ForeColorBtn - The color of the button icon (default is black)
+'   RightBtn - Whether the button should be on the right side (default is True)
+'   VisibleBtn - Whether the button should be visible (default is True)
+'   IconCode - The icon to use for the button (default is stopwatch icon)
+'   ForeColorHours - The color of the hours display (default is black)
+'   ForeColorMinutes - The color of the minutes display (default is black)
+'   ForeColorColon - The color of the colon separator (default is black)
+'   ForeColorArrowUpHours - The color of the up arrow for hours (default is black)
+'   ForeColorArrowDownHours - The color of the down arrow for hours (default is black)
+'   ForeColorArrowUpMinutes - The color of the up arrow for minutes (default is black)
+'   ForeColorArrowDownMinutes - The color of the down arrow for minutes (default is black)
 Public Sub addTimePicker(ByRef TextBox As MSForms.TextBox, _
         Optional SetTime As Date = 0, _
-        Optional ForeColorBtn As XlRgbColor = rgbBlack, _
+        Optional ForeColorBtn As XlRgbColor = enTimeColors.tcBlack, _
         Optional RightBtn As Boolean = True, _
         Optional VisibleBtn As Boolean = True, _
         Optional IconCode As enIconTime = icStopwatch, _
-        Optional ForeColorHours As XlRgbColor = rgbBlack, _
-        Optional ForeColorMinuts As XlRgbColor = rgbBlack, _
-        Optional ForeColorColon As XlRgbColor = rgbBlack, _
-        Optional ForeColorArrowUpHours As XlRgbColor = rgbBlack, _
-        Optional ForeColorArrowDownHours As XlRgbColor = rgbBlack, _
-        Optional ForeColorArrowUpMinuts As XlRgbColor = rgbBlack, _
-        Optional ForeColorArrowDownMinuts As XlRgbColor = rgbBlack)
+        Optional ForeColorHours As XlRgbColor = enTimeColors.tcBlack, _
+        Optional ForeColorMinutes As XlRgbColor = enTimeColors.tcBlack, _
+        Optional ForeColorColon As XlRgbColor = enTimeColors.tcBlack, _
+        Optional ForeColorArrowUpHours As XlRgbColor = enTimeColors.tcBlack, _
+        Optional ForeColorArrowDownHours As XlRgbColor = enTimeColors.tcBlack, _
+        Optional ForeColorArrowUpMinutes As XlRgbColor = enTimeColors.tcBlack, _
+        Optional ForeColorArrowDownMinutes As XlRgbColor = enTimeColors.tcBlack)
 
+    ' Check if TextBox is Nothing
+    If TextBox Is Nothing Then
+        Err.Raise vbObjectError + 101, "clsCalendarTime", "TextBox cannot be Nothing"
+        Exit Sub
+    End If
+    
     Set mTextBox = TextBox
     Set mParent = mTextBox.Parent
     With mTextBox
-        Set mMainPanel = mParent.Controls.Add("Forms.frame.1", .Name & "_lb_main", True)
-        Set mLbBtn = mParent.Controls.Add("Forms.label.1", .Name & "_lb_btn", True)
+        ' Check if controls already exist before creating new ones
+        On Error Resume Next
+        Set mMainPanel = mParent.Controls(.Name & "_lb_main")
+        Set mLbBtn = mParent.Controls(.Name & "_lb_btn")
+        On Error GoTo 0
+        If mMainPanel Is Nothing Then
+            Set mMainPanel = mParent.Controls.Add("Forms.frame.1", .Name & "_lb_main", True)
+        End If
+        If mLbBtn Is Nothing Then
+            Set mLbBtn = mParent.Controls.Add("Forms.label.1", .Name & "_lb_btn", True)
+        End If
     End With
 
     If SetTime = 0 Then SetTime = VBA.Time()
@@ -191,13 +288,23 @@ Public Sub addTimePicker(ByRef TextBox As MSForms.TextBox, _
     mRightBtn = RightBtn
 
     With mMainPanel
-        Set mLbMainColon = .Controls.Add("Forms.label.1", .Name & "_lb_colon", True)
-        Set mLbHours = .Controls.Add("Forms.label.1", .Name & "_lb_hour", True)
-        Set mLbMinuts = .Controls.Add("Forms.label.1", .Name & "_lb_minute", True)
-        Set mLbArrowUpHours = .Controls.Add("Forms.label.1", .Name & "_lb_arrow_up_hour", True)
-        Set mLbArrowDownHours = .Controls.Add("Forms.label.1", .Name & "_lb_arrow_down_hour", True)
-        Set mLbArrowUpMinuts = .Controls.Add("Forms.label.1", .Name & "_lb_arrow_up_minute", True)
-        Set mLbArrowDownMinuts = .Controls.Add("Forms.label.1", .Name & "_lb_arrow_down_minute", True)
+        On Error Resume Next
+        Set mLbMainColon = .Controls(.Name & "_lb_colon")
+        Set mLbHours = .Controls(.Name & "_lb_hour")
+        Set mLbMinutes = .Controls(.Name & "_lb_minute")
+        Set mLbArrowUpHours = .Controls(.Name & "_lb_arrow_up_hour")
+        Set mLbArrowDownHours = .Controls(.Name & "_lb_arrow_down_hour")
+        Set mLbArrowUpMinutes = .Controls(.Name & "_lb_arrow_up_minute")
+        Set mLbArrowDownMinutes = .Controls(.Name & "_lb_arrow_down_minute")
+        On Error GoTo 0
+        
+        If mLbMainColon Is Nothing Then Set mLbMainColon = .Controls.Add("Forms.label.1", .Name & "_lb_colon", True)
+        If mLbHours Is Nothing Then Set mLbHours = .Controls.Add("Forms.label.1", .Name & "_lb_hour", True)
+        If mLbMinutes Is Nothing Then Set mLbMinutes = .Controls.Add("Forms.label.1", .Name & "_lb_minute", True)
+        If mLbArrowUpHours Is Nothing Then Set mLbArrowUpHours = .Controls.Add("Forms.label.1", .Name & "_lb_arrow_up_hour", True)
+        If mLbArrowDownHours Is Nothing Then Set mLbArrowDownHours = .Controls.Add("Forms.label.1", .Name & "_lb_arrow_down_hour", True)
+        If mLbArrowUpMinutes Is Nothing Then Set mLbArrowUpMinutes = .Controls.Add("Forms.label.1", .Name & "_lb_arrow_up_minute", True)
+        If mLbArrowDownMinutes Is Nothing Then Set mLbArrowDownMinutes = .Controls.Add("Forms.label.1", .Name & "_lb_arrow_down_minute", True)
 
         If mTextBox.Width < SIZE_WIDTH Then
             .Width = SIZE_WIDTH
@@ -238,7 +345,7 @@ Public Sub addTimePicker(ByRef TextBox As MSForms.TextBox, _
         .ZOrder 0
     End With
 
-    With mLbMinuts
+    With mLbMinutes
         .Width = SIZE_LABEL
         .Height = SIZE_LABEL
         .Caption = VBA.Format$(VBA.Minute(SetTime), "00")
@@ -247,7 +354,7 @@ Public Sub addTimePicker(ByRef TextBox As MSForms.TextBox, _
         .Font.Bold = True
         .Top = mLbMainColon.Top
         .Left = mLbMainColon.Left + mLbMainColon.Width
-        .ForeColor = ForeColorMinuts
+        .ForeColor = ForeColorMinutes
         .ZOrder 0
     End With
 
@@ -273,8 +380,8 @@ Public Sub addTimePicker(ByRef TextBox As MSForms.TextBox, _
 
     Call addArrowLabel(mLbArrowUpHours, mLbHours, 59150, -1, ForeColorArrowUpHours)
     Call addArrowLabel(mLbArrowDownHours, mLbHours, 59149, 1, ForeColorArrowDownHours)
-    Call addArrowLabel(mLbArrowUpMinuts, mLbMinuts, 59150, -1, ForeColorArrowUpMinuts)
-    Call addArrowLabel(mLbArrowDownMinuts, mLbMinuts, 59149, 1, ForeColorArrowDownMinuts)
+    Call addArrowLabel(mLbArrowUpMinutes, mLbMinutes, 59150, -1, ForeColorArrowUpMinutes)
+    Call addArrowLabel(mLbArrowDownMinutes, mLbMinutes, 59149, 1, ForeColorArrowDownMinutes)
 
     mMainPanel.Visible = False
 End Sub
@@ -309,9 +416,9 @@ Private Sub SetValueTextBox()
     If mMainPanel.Visible Then
         If mTextBox.Value = vbNullString Then
             mLbHours.Caption = VBA.Format$(VBA.hour(VBA.Time()), "00")
-            mLbMinuts.Caption = VBA.Format$(VBA.Minute(VBA.Time()), "00")
+            mLbMinutes.Caption = VBA.Format$(VBA.Minute(VBA.Time()), "00")
         End If
-        mTextBox.Value = mLbHours.Caption & ":" & mLbMinuts.Caption
+        mTextBox.Value = mLbHours.Caption & ":" & mLbMinutes.Caption
     End If
 End Sub
 
@@ -327,82 +434,72 @@ Private Sub mLbArrowDownHours_Click()
     Call setTim(-1, True)
 End Sub
 
-Private Sub mLbArrowUpMinuts_Click()
+Private Sub mLbArrowUpMinutes_Click()
     Call setTim(1, False)
 End Sub
 
-Private Sub mLbArrowDownMinuts_Click()
+Private Sub mLbArrowDownMinutes_Click()
     Call setTim(-1, False)
+End Sub
+
+' Method for cleaning up created controls
+Public Sub Cleanup()
+    On Error Resume Next
+    If Not mMainPanel Is Nothing Then
+        mMainPanel.Parent.Controls.Remove mMainPanel.Name
+        Set mMainPanel = Nothing
+    End If
+    If Not mLbBtn Is Nothing Then
+        mLbBtn.Parent.Controls.Remove mLbBtn.Name
+        Set mLbBtn = Nothing
+    End If
+    Set mTextBox = Nothing
+    Set mParent = Nothing
+    Set mLbMainColon = Nothing
+    Set mLbHours = Nothing
+    Set mLbMinutes = Nothing
+    Set mLbArrowUpHours = Nothing
+    Set mLbArrowDownHours = Nothing
+    Set mLbArrowUpMinutes = Nothing
+    Set mLbArrowDownMinutes = Nothing
 End Sub
 
 Private Sub setTim(ByVal iUp As Integer, isHour As Boolean)
     Dim iHour       As Integer
     Dim iMinute     As Integer
+    
+    iHour = VBA.CInt(mLbHours.Caption)
+    iMinute = VBA.CInt(mLbMinutes.Caption)
 
     If isHour Then
-        iHour = VBA.CInt(mLbHours.Caption) + iUp
-        iMinute = VBA.CInt(mLbMinuts.Caption)
+        iHour = iHour + iUp
         Select Case iHour
             Case Is < 0
                 iHour = 23
             Case Is > 23
                 iHour = 0
-            Case 0 To 23
         End Select
     Else
-        iHour = VBA.CInt(mLbHours.Caption)
-        iMinute = VBA.CInt(mLbMinuts.Caption) + iUp
+        iMinute = iMinute + iUp
         Select Case iMinute
             Case Is < 0
                 iMinute = 59
-                iHour = iHour + iUp
+                ' When changing minutes by -1, if minutes become 59, decrease hours by 1
+                If iUp < 0 Then iHour = iHour + iUp
             Case Is > 59
                 iMinute = 0
-                iHour = iHour + iUp
-            Case 0 To 59
+                ' When changing minutes by +1, if minutes become 0, increase hours by 1
+                If iUp > 0 Then iHour = iHour + iUp
         End Select
     End If
+    
+    ' Check hour boundaries when changing minutes
+    If Not isHour Then
+        If iHour < 0 Then iHour = 23
+        If iHour > 23 Then iHour = 0
+    End If
+    
     mLbHours.Caption = VBA.Format$(iHour, "00")
-    mLbMinuts.Caption = VBA.Format$(iMinute, "00")
-    mTextBox.Value = mLbHours.Caption & ":" & mLbMinuts.Caption
+    mLbMinutes.Caption = VBA.Format$(iMinute, "00")
+    mTextBox.Value = mLbHours.Caption & ":" & mLbMinutes.Caption
 End Sub
-'
-'Private Sub mParent_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
-'    mLbArrowUpHours.ForeColor = BlendColor(mLbArrowUpHours.ForeColor, RGB(255, 255, 255), 0)
-'End Sub
-'
-'Private Sub mMainPanel_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
-'    mLbArrowUpHours.ForeColor = BlendColor(mLbArrowUpHours.ForeColor, RGB(255, 255, 255), 0)
-'End Sub
-'
-'Private Sub mLbArrowUpHours_MouseMove(ByVal Button As Integer, ByVal Shift As Integer, ByVal X As Single, ByVal Y As Single)
-'    mLbArrowUpHours.ForeColor = BlendColor(mLbArrowUpHours.ForeColor, RGB(255, 255, 255), 155 / 255)
-'End Sub
-'
-'' Function to blend colors for hover effect
-'Private Function BlendColor(ByVal color1 As Long, color2 As Long, ByVal factor As Double) As Long
-'    Dim r1 As Byte, g1 As Byte, b1 As Byte
-'    Dim r2 As Byte, g2 As Byte, b2 As Byte
-'    Dim r As Byte, g As Byte, b As Byte
-'
-'    ' Extract BGR components from the first color (VBA uses BGR format)
-'    r1 = color1 Mod 256
-'    g1 = (color1 \ 256) Mod 256
-'    b1 = (color1 \ 6536) Mod 256
-'
-'    ' Extract BGR components from the second color (VBA uses BGR format)
-'    r2 = color2 Mod 256
-'    g2 = (color2 \ 256) Mod 256
-'    b2 = (color2 \ 65536) Mod 256
-'
-'    ' Blend the colors
-'    r = r1 + (r2 - r1) * factor
-'    g = g1 + (g2 - g1) * factor
-'    b = b1 + (b2 - b1) * factor
-'
-'    ' Return the blended color
-'    BlendColor = RGB(r, g, b)
-'End Function
-
-
-

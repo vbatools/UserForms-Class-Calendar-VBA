@@ -13,6 +13,8 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
+
 Option Explicit
 
 Dim clTime          As clsCalendarTime
@@ -53,7 +55,7 @@ Private Sub UserForm_Initialize()
     Call clDate_custom.addDatePicker(TextBox3, VBA.Date(), VBA.Date() - 365, VBA.Date() + 30, , "yyyy/mmm/dd", rgbBrown, False, True, rgbBlueViolet, icCalendarWeek, rgbGoldenrod, rgbLightGreen, rgbGreen, rgbRed)
 
     Set clDate_mount = New clsCalendarDate
-    Call clDate_mount.addDatePicker(TextBox5, "01.01.2020", , , enMount, "mmmm", rgbViolet)
+    Call clDate_mount.addDatePicker(TextBox5, "01.01.2020", , , enMonth, "mmmm", rgbViolet)
 
     Set clDate_year = New clsCalendarDate
     Call clDate_year.addDatePicker(TextBox6, "01.01.2020", VBA.Date() - 365, VBA.Date() + 30, enYear, , , , , rgbGold, icCalendarMirrored)

@@ -10,15 +10,34 @@ Attribute VB_Exposed = False
 Option Explicit
 
 '========================================================================================
-' Class:           clsModernStyle
-' Author:          VBATools
-' Version:         1.0.1
-' Creation Date:   18.11.2025 15:28
-' Update Date:     18.11.2025 15:28
+' Class: clsCalendarDate
+' Author: VBATools
+' Version: 1.0.2
+' Creation Date: 18.11.2025 15:28
+' Last Update Date: 03.12.2025 14:00
+' License: Apache License
 '========================================================================================
+
+' Цветовые константы для календаря
+Public Enum enCalendarColors
+    ccBlack = 0
+    ccWhite = 1677215
+    ccRed = 255
+    ccGreen = 65280
+    ccBlue = 16711680
+    ccYellow = 65535
+    ccOrange = 42495
+    ccBrown = 2763429
+    ccGray = 8421504
+    ccLightGray = 12632256
+    ccSelectedDate = 12632319
+    ccMoveHighlight = 14737632
+    ccTitleBar = 128
+End Enum
+
 Public Enum enTypeCalendar
     enDay = 0
-    enMount
+    enMonth
     enYear
 End Enum
 
@@ -53,11 +72,11 @@ Private mMaxDate As Date
 ' Property: Version
 ' Purpose: Gets version information about the class
 Public Property Get Version() As String
-    Version = "Version: 1.0.1" & vbNewLine & _
+    Version = "Version: 1.0.2" & vbNewLine & _
             "Author: VBATools" & vbNewLine & _
             "License: Apache" & vbNewLine & _
             "Date of creation: 18.11.2025 15:28" & vbNewLine & _
-            "Date of update: 18.11.2025 15:28"
+            "Date of update: 03.12.2025 14:00"
 End Property
 
 Public Property Get TypeCalendar() As enTypeCalendar
@@ -96,11 +115,11 @@ Public Property Let ForeColorDayYes(ByVal Color As XlRgbColor)
     mForeColorDayYes = Color
 End Property
 
-Public Property Get �olorMove() As XlRgbColor
-    �olorMove = mColorMove
+Public Property Get ColorMove() As XlRgbColor
+    ColorMove = mColorMove
 End Property
 
-Public Property Let �olorMove(ByVal Color As XlRgbColor)
+Public Property Let ColorMove(ByVal Color As XlRgbColor)
     mColorMove = Color
 End Property
 
@@ -176,37 +195,48 @@ Public Sub addDatePicker(ByRef TextBox As MSForms.TextBox, _
         Optional VisibleBtn As Boolean = True, _
         Optional ForeColorTitle As XlRgbColor = &H80&, _
         Optional IconCode As enIconCalendar = enIconCalendar.icCalendar, _
-        Optional �olorSelectedDate As XlRgbColor = 12632319, _
+        Optional ColorSelectedDate As XlRgbColor = 12632319, _
         Optional ColorMove As XlRgbColor = 14737632, _
         Optional ForeColorDayYes As XlRgbColor = rgbBlack, _
         Optional ForeColorDayNo As XlRgbColor = 8421504)
         
     If minDate > maxDate Then
-        Call Err.Raise(vbObjectError + 101, "clsCalendarDate", "the minimum date:[ & MinDate & ] is greater than the maximum:[ & MaxDate & ]")
+        Call Err.Raise(vbObjectError + 101, "clsCalendarDate", "the minimum date:[" & minDate & "] is greater than the maximum:[" & maxDate & "]")
         Exit Sub
     End If
 
     Set mTextBox = TextBox
     Set mParent = mTextBox.Parent
     With mTextBox
-        Set mLbBtn = mParent.Controls.Add("Forms.label.1", .Name & "_lb_btn", True)
+        ' Проверяем, существует ли уже кнопка, прежде чем создавать новую
+        On Error Resume Next
+        Set mLbBtn = mParent.Controls(.Name & "_lb_btn")
+        On Error GoTo 0
+        If mLbBtn Is Nothing Then
+            Set mLbBtn = mParent.Controls.Add("Forms.label.1", .Name & "_lb_btn", True)
+        End If
     End With
 
     mForeColorTitle = ForeColorTitle
     mFormatDate = VBA.LCase$(FormatDate)
-    mColorSelectedDate = �olorSelectedDate
+    mColorSelectedDate = ColorSelectedDate
     mColorMove = ColorMove
     mForeColorDayYes = ForeColorDayYes
     mForeColorDayNo = ForeColorDayNo
     mMinDate = minDate
     mMaxDate = maxDate
 
+    ' Проверяем корректность формата даты
+    If Not IsValidDateFormat(mFormatDate, TypeCalendar) Then
+        mFormatDate = GetDefaultFormat(TypeCalendar)
+    End If
+    
     Select Case TypeCalendar
         Case enTypeCalendar.enDay
             If mFormatDate = vbNullString Then mFormatDate = "dd.mm.yyyy"
             If SetDate = 0 Then SetDate = VBA.Date()
             mTextBox.Value = VBA.Format$(SetDate, mFormatDate)
-        Case enTypeCalendar.enMount
+        Case enTypeCalendar.enMonth
             If SetDate = 0 Then
                 mTextBox.Value = VBA.Month(VBA.Date())
             Else
@@ -260,9 +290,61 @@ Private Sub mLbBtn_Click()
     Call SetValueTextBox
 End Sub
 
+' Проверяет корректность формата даты для заданного типа календаря
+Private Function IsValidDateFormat(FormatDate As String, CalendarType As enTypeCalendar) As Boolean
+    ' Для типа enDay проверяем, является ли формат допустимым форматом даты
+    If CalendarType = enTypeCalendar.enDay Then
+        If FormatDate = vbNullString Then
+            IsValidDateFormat = True
+            Exit Function
+        End If
+        ' Пробуем применить формат к текущей дате
+        On Error GoTo ErrorHandler
+        Dim testDate As Date
+        testDate = VBA.Date
+        Dim formatted As String
+        formatted = VBA.Format$(testDate, FormatDate)
+        IsValidDateFormat = (formatted <> vbNullString)
+        Exit Function
+    End If
+    
+    ' Для типа enMonth проверяем, является ли формат "mm" или "mm"
+    If CalendarType = enTypeCalendar.enMonth Then
+        IsValidDateFormat = (FormatDate = "mm" Or FormatDate = "mmmm")
+        Exit Function
+    End If
+    
+    ' Для типа enYear формат не используется, поэтому возвращаем True
+    If CalendarType = enTypeCalendar.enYear Then
+        IsValidDateFormat = True
+        Exit Function
+    End If
+    
+    IsValidDateFormat = True
+    Exit Function
+
+ErrorHandler:
+    IsValidDateFormat = False
+End Function
+
+' Возвращает формат даты по умолчанию для заданного типа календаря
+Private Function GetDefaultFormat(CalendarType As enTypeCalendar) As String
+    Select Case CalendarType
+        Case enTypeCalendar.enDay
+            GetDefaultFormat = "dd.mm.yyyy"
+        Case enTypeCalendar.enMonth
+            GetDefaultFormat = "mmmm"
+        Case enTypeCalendar.enYear
+            GetDefaultFormat = ""
+    End Select
+End Function
+
 Private Sub SetValueTextBox()
     Dim sVal        As String
-    Set frmCalendar = New frmDatepickerform
+    ' Проверяем, существует ли уже экземпляр формы
+    If frmCalendar Is Nothing Then
+        Set frmCalendar = New frmDatepickerform
+    End If
     With frmCalendar
         .redBG.BackColor = mForeColorTitle
         sVal = mTextBox.Value
@@ -280,7 +362,7 @@ Private Sub SetValueTextBox()
         Select Case mTypeCalendar
             Case enTypeCalendar.enDay
                 .lbTypeCalendar.Caption = 0
-            Case enTypeCalendar.enMount
+            Case enTypeCalendar.enMonth
                 .lbTypeCalendar.Caption = 1
                 .iSelectGlobal = VBA.Month(VBA.Date())
             Case enTypeCalendar.enYear
@@ -292,7 +374,7 @@ Private Sub SetValueTextBox()
         sVal = .lbDateChose.Caption
         If sVal <> vbNullString Then
             mTextBox.Value = VBA.Format$(sVal, mFormatDate)
-            If mTypeCalendar = enMount Then
+            If mTypeCalendar = enMonth Then
                 Select Case mFormatDate
                     Case "mm"
                         mTextBox.Value = VBA.MonthName(sVal, True)
@@ -302,5 +384,6 @@ Private Sub SetValueTextBox()
             End If
         End If
     End With
-    Set frmCalendar = Nothing
+    ' Не устанавливаем frmCalendar в Nothing, чтобы можно было повторно использовать экземпляр
+    ' Set frmCalendar = Nothing
 End Sub
