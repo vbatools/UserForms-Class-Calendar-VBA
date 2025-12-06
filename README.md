@@ -37,6 +37,3 @@ Both classes are designed for use with Microsoft Excel VBA and require user form
 Detailed usage examples for each class are provided in the corresponding documentation files:
 - [clsCalendarDate usage example](./README_DATE_ENG.md#usage-example)
 - [clsCalendarTime usage example](./README_TIME_ENG.md#usage-example)
-
-## Demo
-![User Forms Demo](User_Forms.gif)
