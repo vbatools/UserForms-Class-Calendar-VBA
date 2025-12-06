@@ -18,7 +18,7 @@ Option Explicit
 ' License: Apache License
 '========================================================================================
 
-' Цветовые константы для календаря
+' Calendar color constants
 Public Enum enCalendarColors
     ccBlack = 0
     ccWhite = 1677215
@@ -208,7 +208,7 @@ Public Sub addDatePicker(ByRef TextBox As MSForms.TextBox, _
     Set mTextBox = TextBox
     Set mParent = mTextBox.Parent
     With mTextBox
-        ' Проверяем, существует ли уже кнопка, прежде чем создавать новую
+        ' Check if button already exists before creating a new one
         On Error Resume Next
         Set mLbBtn = mParent.Controls(.Name & "_lb_btn")
         On Error GoTo 0
@@ -226,7 +226,7 @@ Public Sub addDatePicker(ByRef TextBox As MSForms.TextBox, _
     mMinDate = minDate
     mMaxDate = maxDate
 
-    ' Проверяем корректность формата даты
+    ' Check date format correctness
     If Not IsValidDateFormat(mFormatDate, TypeCalendar) Then
         mFormatDate = GetDefaultFormat(TypeCalendar)
     End If
@@ -290,15 +290,15 @@ Private Sub mLbBtn_Click()
     Call SetValueTextBox
 End Sub
 
-' Проверяет корректность формата даты для заданного типа календаря
+' Checks the correctness of the date format for the specified calendar type
 Private Function IsValidDateFormat(FormatDate As String, CalendarType As enTypeCalendar) As Boolean
-    ' Для типа enDay проверяем, является ли формат допустимым форматом даты
+    ' For enDay type, check if the format is a valid date format
     If CalendarType = enTypeCalendar.enDay Then
         If FormatDate = vbNullString Then
             IsValidDateFormat = True
             Exit Function
         End If
-        ' Пробуем применить формат к текущей дате
+        ' Try to apply the format to the current date
         On Error GoTo ErrorHandler
         Dim testDate As Date
         testDate = VBA.Date
@@ -308,13 +308,13 @@ Private Function IsValidDateFormat(FormatDate As String, CalendarType As enTypeC
         Exit Function
     End If
 
-    ' Для типа enMonth проверяем, является ли формат "mm" или "mm"
+    ' For enMonth type, check if the format is "mm" or "mmmm"
     If CalendarType = enTypeCalendar.enMonth Then
         IsValidDateFormat = (FormatDate = "mm" Or FormatDate = "mmmm")
         Exit Function
     End If
 
-    ' Для типа enYear формат не используется, поэтому возвращаем True
+    ' For enYear type, the format is not used, so return True
     If CalendarType = enTypeCalendar.enYear Then
         IsValidDateFormat = True
         Exit Function
@@ -327,7 +327,7 @@ ErrorHandler:
     IsValidDateFormat = False
 End Function
 
-' Возвращает формат даты по умолчанию для заданного типа календаря
+' Returns the default date format for the specified calendar type
 Private Function GetDefaultFormat(CalendarType As enTypeCalendar) As String
     Select Case CalendarType
         Case enTypeCalendar.enDay

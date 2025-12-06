@@ -1,5 +1,8 @@
 # clsCalendarDate and clsCalendarTime Classes
 
+![User Forms Demo](User_Forms.gif)
+
+
 ## General Description
 This project includes two classes for working with dates and times in Excel VBA:
 - [`clsCalendarDate`](./README_DATE_ENG.md) - date selection class
@@ -34,3 +37,6 @@ Both classes are designed for use with Microsoft Excel VBA and require user form
 Detailed usage examples for each class are provided in the corresponding documentation files:
 - [clsCalendarDate usage example](./README_DATE_ENG.md#usage-example)
 - [clsCalendarTime usage example](./README_TIME_ENG.md#usage-example)
+
+## Demo
+![User Forms Demo](User_Forms.gif)
