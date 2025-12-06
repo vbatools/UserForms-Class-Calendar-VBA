@@ -66,8 +66,8 @@ Private mColorSelectedDate As XlRgbColor
 Private mColorMove  As XlRgbColor
 Private mForeColorDayYes As XlRgbColor
 Private mForeColorDayNo As XlRgbColor
-Private mMinDate As Date
-Private mMaxDate As Date
+Private mMinDate    As Date
+Private mMaxDate    As Date
 
 ' Property: Version
 ' Purpose: Gets version information about the class
@@ -199,7 +199,7 @@ Public Sub addDatePicker(ByRef TextBox As MSForms.TextBox, _
         Optional ColorMove As XlRgbColor = 14737632, _
         Optional ForeColorDayYes As XlRgbColor = rgbBlack, _
         Optional ForeColorDayNo As XlRgbColor = 8421504)
-        
+
     If minDate > maxDate Then
         Call Err.Raise(vbObjectError + 101, "clsCalendarDate", "the minimum date:[" & minDate & "] is greater than the maximum:[" & maxDate & "]")
         Exit Sub
@@ -230,7 +230,7 @@ Public Sub addDatePicker(ByRef TextBox As MSForms.TextBox, _
     If Not IsValidDateFormat(mFormatDate, TypeCalendar) Then
         mFormatDate = GetDefaultFormat(TypeCalendar)
     End If
-    
+
     Select Case TypeCalendar
         Case enTypeCalendar.enDay
             If mFormatDate = vbNullString Then mFormatDate = "dd.mm.yyyy"
@@ -307,19 +307,19 @@ Private Function IsValidDateFormat(FormatDate As String, CalendarType As enTypeC
         IsValidDateFormat = (formatted <> vbNullString)
         Exit Function
     End If
-    
+
     ' Для типа enMonth проверяем, является ли формат "mm" или "mm"
     If CalendarType = enTypeCalendar.enMonth Then
         IsValidDateFormat = (FormatDate = "mm" Or FormatDate = "mmmm")
         Exit Function
     End If
-    
+
     ' Для типа enYear формат не используется, поэтому возвращаем True
     If CalendarType = enTypeCalendar.enYear Then
         IsValidDateFormat = True
         Exit Function
     End If
-    
+
     IsValidDateFormat = True
     Exit Function
 
@@ -341,10 +341,7 @@ End Function
 
 Private Sub SetValueTextBox()
     Dim sVal        As String
-    ' Проверяем, существует ли уже экземпляр формы
-    If frmCalendar Is Nothing Then
-        Set frmCalendar = New frmDatepickerform
-    End If
+    Set frmCalendar = New frmDatepickerform
     With frmCalendar
         .redBG.BackColor = mForeColorTitle
         sVal = mTextBox.Value
@@ -384,6 +381,5 @@ Private Sub SetValueTextBox()
             End If
         End If
     End With
-    ' Не устанавливаем frmCalendar в Nothing, чтобы можно было повторно использовать экземпляр
-    ' Set frmCalendar = Nothing
+    Set frmCalendar = Nothing
 End Sub
