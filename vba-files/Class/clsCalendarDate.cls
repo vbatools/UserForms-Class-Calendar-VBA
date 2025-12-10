@@ -12,9 +12,9 @@ Option Explicit
 '========================================================================================
 ' Class: clsCalendarDate
 ' Author: VBATools
-' Version: 1.0.2
+' Version: 1.0.3
 ' Creation Date: 18.11.2025 15:28
-' Last Update Date: 03.12.2025 14:00
+' Last Update Date: 10.12.2025 14:00
 ' License: Apache License
 '========================================================================================
 
@@ -69,15 +69,52 @@ Private mForeColorDayNo As XlRgbColor
 Private mMinDate    As Date
 Private mMaxDate    As Date
 
-' Property: Version
-' Purpose: Gets version information about the class
-Public Property Get Version() As String
-    Version = "Version: 1.0.2" & vbNewLine & _
-            "Author: VBATools" & vbNewLine & _
-            "License: Apache" & vbNewLine & _
-            "Date of creation: 18.11.2025 15:28" & vbNewLine & _
-            "Date of update: 03.12.2025 14:00"
-End Property
+Public Enum enumParametrVersion
+    enName = 0
+    enAuthor
+    enVersion
+    enLicense
+    enDateOfCreation
+    enDateOfUpdate
+    enDescription
+    enAll
+    [_First] = enName
+    [_Last] = enAll
+End Enum
+
+Public Function Version(ByVal Parametr As enumParametrVersion) As String
+    Dim sRes As String
+    Select Case Parametr
+        Case enumParametrVersion.enAll:
+            Dim i   As Byte
+            For i = enumParametrVersion.[_First] To enumParametrVersion.[_Last] - 1
+                If sRes <> vbNullString Then sRes = sRes & vbNewLine
+                sRes = sRes & VersionItem(i)
+            Next i
+        Case Else:
+            sRes = VersionItem(Parametr)
+    End Select
+    Version = sRes
+End Function
+
+Private Function VersionItem(ByVal Parametr As enumParametrVersion) As String
+    Select Case Parametr
+        Case enumParametrVersion.enName:
+            VersionItem = "Class: clsCalendarDate"
+        Case enumParametrVersion.enAuthor:
+            VersionItem = "Author: VBATools"
+        Case enumParametrVersion.enVersion:
+            VersionItem = "Version: 1.0.3"
+        Case enumParametrVersion.enLicense:
+            VersionItem = "License: Apache License"
+        Case enumParametrVersion.enDateOfCreation:
+            VersionItem = "Date of creation: 18.11.2025 15:28"
+        Case enumParametrVersion.enDateOfUpdate:
+            VersionItem = "Date of update: 10.12.2025 14:00"
+        Case enumParametrVersion.enDescription:
+            VersionItem = "Description: Class provides functionality for adding a date selection calendar to a text field in an Excel VBA user form. It allows users to conveniently select dates, months, or years through a visual interface"
+    End Select
+End Function
 
 Public Property Get TypeCalendar() As enTypeCalendar
     TypeCalendar = mTypeCalendar
@@ -263,7 +300,7 @@ Public Sub addDatePicker(ByRef TextBox As MSForms.TextBox, _
     With mLbBtn
         .Height = mTextBox.Height
         .Width = .Height
-        .Font.Size = .Height * 0.65
+        .Font.Size = .Height * 0.8
         .Font.Name = "Segoe MDL2 Assets"
         .Caption = VBA.ChrW$(IconCode)
         .TextAlign = fmTextAlignCenter
@@ -366,6 +403,20 @@ Private Sub SetValueTextBox()
                 .lbTypeCalendar.Caption = 1
                 .iSelectGlobal = VBA.Year(VBA.Date())
         End Select
+
+        Dim iVal    As Single
+        iVal = mLbBtn.Parent.Top + mLbBtn.Top + 20
+        If iVal + .barHeight.Height > Application.Top + Application.Height Then iVal = Application.Top + Application.Height - .barHeight.Height
+        .lbTop.Caption = iVal
+
+        If mRightBtn Then
+            iVal = mLbBtn.Parent.Left + mLbBtn.Left + mLbBtn.Width
+            If iVal + .redBG.Width > Application.Left + Application.Width Then iVal = mLbBtn.Parent.Left + mTextBox.Left - .redBG.Width
+        Else
+            iVal = mLbBtn.Parent.Left + mLbBtn.Left - .redBG.Width
+            If iVal < Application.Left Then iVal = mLbBtn.Parent.Left + mTextBox.Left + mTextBox.Width
+        End If
+        .lbLeft.Caption = iVal
 
         Call .Show(1)
         sVal = .lbDateChose.Caption

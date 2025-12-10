@@ -35,6 +35,10 @@ Private sDateGlobal As String
 Public iSelectGlobal As Integer
 Private iShiftGlobal As Integer
 
+Private Sub Label3_Click()
+
+End Sub
+
 Private Sub monthTitle_Click()
     If lbTypeCalendar.Caption = "1" Then Exit Sub
     iSelectGlobal = iMounthGlobal
@@ -104,8 +108,8 @@ Private Sub UserForm_Activate()
 
     With Me
         .StartUpPosition = 0
-        .Left = Application.Left + 0.5 * (Application.Width - .Width)
-        .Top = Application.Top + 0.5 * (Application.Height - .Height)
+        .Top = VBA.CSng(lbTop.Caption)
+        .Left = VBA.CSng(lbLeft.Caption)
     End With
 End Sub
 

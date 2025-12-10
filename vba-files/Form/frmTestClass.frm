@@ -60,5 +60,5 @@ Private Sub UserForm_Initialize()
     Set clDate_year = New clsCalendarDate
     Call clDate_year.addDatePicker(TextBox6, "01.01.2020", VBA.Date() - 365, VBA.Date() + 30, enYear, , , , , rgbGold, icCalendarMirrored)
 
-    lbVersion.Caption = clTime.Version
+    lbVersion.Caption = clDate.Version(enAll)
 End Sub

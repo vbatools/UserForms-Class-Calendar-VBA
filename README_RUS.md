@@ -1,5 +1,7 @@
 # Классы clsCalendarDate и clsCalendarTime
 
+![User Forms Demo](User_Forms.gif)
+
 ## Общее описание
 Данный проект включает в себя два класса для работы с датами и временем в Excel VBA:
 - [`clsCalendarDate`](./README_DATE_RUS.md) - класс для выбора даты
