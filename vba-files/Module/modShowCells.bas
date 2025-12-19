@@ -6,6 +6,10 @@ Public Sub showCalendar()
     Call showCalendarCell(Cells(2, 3))
 End Sub
 
+Public Sub showCalendarColor()
+    Call showCalendarCell(Cells(2, 3), , , , , rgbOrangeRed, rgbRoyalBlue, rgbBrown, rgbGold, rgbBlueViolet)
+End Sub
+
 Public Sub showCalendarCell(ByRef Target As Range, _
         Optional minDate As Date = 0, _
         Optional maxDate As Date = 0, _
@@ -46,8 +50,8 @@ Public Sub showCalendarCell(ByRef Target As Range, _
                 .iSelectGlobal = VBA.Year(VBA.Date())
         End Select
 
-        .lbLeft.Caption = Application.Left + Target.Left + Target.Width + 17
-        .lbTop.Caption = Application.Top + Target.Top + Application.CommandBars("Ribbon").Height + 20
+        .lbLeft.Caption = Application.Left + Target.Left + Target.Width + 23
+        .lbTop.Caption = Application.Top + Target.Top + Application.CommandBars("Ribbon").Height + 15
 
         Call .Show(1)
         sVal = .lbDateChose.Caption
