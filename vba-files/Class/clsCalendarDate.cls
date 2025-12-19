@@ -405,18 +405,11 @@ Private Sub SetValueTextBox()
         End Select
 
         Dim iVal    As Single
-        iVal = mLbBtn.Parent.Top + mLbBtn.Top + 20
-        If iVal + .barHeight.Height > Application.Top + Application.Height Then iVal = Application.Top + Application.Height - .barHeight.Height
+        iVal = mLbBtn.Parent.Top + mTextBox.Top + mTextBox.Height + 20
+        If iVal + .barHeight.Height > Application.Top + Application.Height Then iVal = mLbBtn.Parent.Top + mTextBox.Top - .barHeight.Height + 20
         .lbTop.Caption = iVal
 
-        If mRightBtn Then
-            iVal = mLbBtn.Parent.Left + mLbBtn.Left + mLbBtn.Width
-            If iVal + .redBG.Width > Application.Left + Application.Width Then iVal = mLbBtn.Parent.Left + mTextBox.Left - .redBG.Width
-        Else
-            iVal = mLbBtn.Parent.Left + mLbBtn.Left - .redBG.Width
-            If iVal < Application.Left Then iVal = mLbBtn.Parent.Left + mTextBox.Left + mTextBox.Width
-        End If
-        .lbLeft.Caption = iVal
+        .lbLeft.Caption = mLbBtn.Parent.Left + mTextBox.Left
 
         Call .Show(1)
         sVal = .lbDateChose.Caption
